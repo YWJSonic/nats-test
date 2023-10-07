@@ -1,0 +1,17 @@
+docker run -d --name nats-main -p 4222:4222 -p 6222:6222 -p 8222:8222 nats:2.10.1-linux --cluster nats://0.0.0.0:6222 -V
+docker run -d --name nats-1 --link nats-main -p 4223:4222 -p 6223:6222 -p 8223:8222 nats:2.10.1-linux -a 0.0.0.0 -p 4222 --cluster nats://0.0.0.0:7222 --routes=nats://ruser:T0pS3cr3t@nats-main:6222 -V
+docker run -d --name nats-2 --link nats-main -p 4224:4222 -p 6224:6222 -p 8224:8222 nats:2.10.1-linux -a 0.0.0.0 -p 4222 --cluster nats://0.0.0.0:8222 --routes=nats://ruser:T0pS3cr3t@nats-main:6222 -V
+
+use conf file
+docker run -d --name nats-main -p 4222:4222 -p 6222:6222 -p 8222:8222 -v .\nats-main.conf:/nats-main.conf nats:2.10.1-linux -c /nats-main.conf -V
+docker run -d --name nats-1 --link nats-main -p 4223:4222 -p 6223:6222 -p 8223:8222 -v .\nats-1.conf:/nats-1.conf nats:2.10.1-linux -c /nats-1.conf -V
+
+
+Jetstream Mod
+docker run -d --name nats-main -p 4222:4222 -p 6222:6222 -p 8222:8222 nats:2.10.1-linux --cluster nats://0.0.0.0:6222 -js -V
+docker run -d --name=nats-1 --link nats-main -p 4223:4222 -p 6223:6222 -p 8223:8222 nats:2.10.1-linux -a 0.0.0.0 -p 4222 --cluster nats://0.0.0.0:7222 --routes=nats://ruser:T0pS3cr3t@nats-main:6222 -js -V
+docker run -d --name=nats-2 --link nats-main -p 4224:4222 -p 6224:6222 -p 8224:8222 nats:2.10.1-linux -js -a 0.0.0.0 -p 4222 --cluster nats://0.0.0.0:8222 --name=my_cluster --routes=nats://ruser:T0pS3cr3t@nats-main:6222 --name=my_jetstream --server_name=my_jetstream -V
+
+Jetstream Mod use conf file
+docker run -d --name=nats-jet-1 --link nats-main -p 4223:4222 -p 6223:6222 -p 8223:8222 -v .\natsJetStream-1.conf:/natsJetStream-1.conf nats:2.10.1-linux -js -c /natsJetStream-1.conf -V
+docker run -d --name=nats-jet-2 --link nats-main -p 4224:4222 -p 6224:6222 -p 8224:8222 -v .\natsJetStream-2.conf:/natsJetStream-2.conf nats:2.10.1-linux -js -c /natsJetStream-2.conf -V
